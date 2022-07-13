@@ -25,10 +25,10 @@ public class CrimesController {
     private URL location;
 
     @FXML // fx:id="boxCategoria"
-    private ComboBox<?> boxCategoria; // Value injected by FXMLLoader
+    private ComboBox<String> boxCategoria; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxMese"
-    private ComboBox<?> boxMese; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxMese; // Value injected by FXMLLoader
 
     @FXML // fx:id="btnAnalisi"
     private Button btnAnalisi; // Value injected by FXMLLoader
@@ -45,7 +45,20 @@ public class CrimesController {
     @FXML
     void doCreaGrafo(ActionEvent event) {
     	txtResult.clear();
-    	txtResult.appendText("Crea grafo...\n");
+    	
+    	String categoria = boxCategoria.getValue();
+    	Integer mese = boxMese.getValue();
+    	if((categoria == null)||(mese == null)) {
+    		txtResult.appendText("ERRORE: inserire una categoria ed un anno valido!\n");
+    		return;
+    	}
+    	
+    	model.creaGrafo(categoria, mese);
+    	this.txtResult.appendText("GRAFO CREATO!\n");
+    	this.txtResult.appendText("#VERTICI: "+model.nVertici()+"\n");
+    	this.txtResult.appendText("#ARCHI: "+model.nArchi()+"\n");
+    	
+    	this.txtResult.appendText(model.getArchiMaxPesoMedio().toString());
     }
     
     @FXML
@@ -67,5 +80,11 @@ public class CrimesController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	
+    	this.boxCategoria.getItems().addAll(model.getCategorie());
+    	
+    	for(Integer i=1; i<=12; i++) {
+    		this.boxMese.getItems().addAll(i);
+    	}
     }
 }
